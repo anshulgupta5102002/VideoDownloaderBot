@@ -5,3 +5,5 @@ mccabe==0.6.1
 pylint==2.9.6
 toml==0.10.2
 wrapt==1.12.1
+pyfiglet==0.8.post1
+rich==10.6.0
