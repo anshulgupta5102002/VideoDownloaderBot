@@ -138,6 +138,54 @@ async def send_video(message, path, caption, quote, filename):
     )
     await reply.delete()
 
+def parse_json(file,def_format):
+    with open("keys.json") as json_data:
+        config = json.load(json_data)
+    json_mpd_url = config[0]['mpd_url']
+    try:
+        keys = ""
+        for i in range(1, len(config)):
+            keys += f"--key {config[i]['kid']}:{config[i]['hex_key']} "
+    except:
+        keys = ""
+        for i in range(1, len(config)-1):
+            keys += f"--key {config[i]['kid']}:{config[i]['hex_key']} "
+               
+
+            
+    currentFile = __file__
+    realPath = os.path.realpath(currentFile)
+    dirPath = os.path.dirname(realPath)
+    dirName = os.path.basename(dirPath)
+
+
+    youtubedlexe = dirPath + '/binaries/yt-dlp.exe'
+    aria2cexe = dirPath + '/binaries/aria2c.exe'
+    mp4decryptexe = dirPath + '/binaries/mp4decrypt_new.exe'
+    mkvmergeexe = dirPath + '/binaries/mkvmerge.exe'
+    SubtitleEditexe = dirPath + '/binaries/SubtitleEdit.exe'
+    
+    output = 'd1'
+    
+    print(f'Selected MPD : {json_mpd_url}\n')
+    subprocess.run([youtubedlexe, '-k', '--allow-unplayable-formats', '--no-check-certificate', '-f', 'ba', '--fixup', 'never', json_mpd_url, '-o', 'encrypted.m4a', '--external-downloader', aria2cexe, '--external-downloader-args', '-x 16 -s 16 -k 1M'])
+    subprocess.run([youtubedlexe, '-k', '--allow-unplayable-formats', '--no-check-certificate', '-f', 'bv', '--fixup', 'never', json_mpd_url, '-o', 'encrypted.mp4', '--external-downloader', aria2cexe, '--external-downloader-args', '-x 16 -s 16 -k 1M'])    
+
+
+    print("\nDecrypting .....")
+    subprocess.run(f'{mp4decryptexe} --show-progress {keys} encrypted.m4a decrypted.m4a', shell=True)
+    subprocess.run(f'{mp4decryptexe} --show-progress {keys} encrypted.mp4 decrypted.mp4', shell=True)
+
+    print("Merging .....")
+    vid123 = subprocess.run([mkvmergeexe, '--ui-language' ,'en', '--output', output +'.mkv', '--language', '0:eng', '--default-track', '0:yes', '--compression', '0:none', 'decrypted.mp4', '--language', '0:eng', '--default-track', '0:yes', '--compression' ,'0:none', 'decrypted.m4a','--language', '0:eng','--track-order', '0:0,1:0,2:0,3:0,4:0'])
+    print("\nAll Done .....")  
+    os.remove("encrypted.m4a")
+    os.remove("encrypted.mp4")
+    os.remove("decrypted.m4a")
+    os.remove("decrypted.mp4")
+    return d1.mkv
+    
+                
 
 def parse_html(file, def_format):
     with open(file, "r") as f:
@@ -369,16 +417,16 @@ def download_video(message, video):
 
     if "magnetoscript" in link and ("brightcove" in link or len(link.split("/")[-1]) == 13):
         vid_id = link[-13:]
-        link = f"https://player.deshdeepak.me/{vid_id}"
+        link = f"http://cdn.jwplayer.com/v2/media/{vid_id}"
     elif "magnetoscript" in link and "jwp" in link:
         vid_id = link[-8:]
-        link = f"https://player.deshdeepak.me/{vid_id}"
+        link = f"http://cdn.jwplayer.com/v2/media/{vid_id}"
     elif "jwplayer" in link and link.endswith('.m3u8'):
         vid_id = link.removesuffix(".m3u8").split("/")[-1]
-        link = f"https://player.deshdeepak.me/{vid_id}"
+        link = f"http://cdn.jwplayer.com/v2/media/{vid_id}"
     elif "jwplayer" in link and link.endswith('.mp4'):
         vid_id = link.removesuffix('.mp4').split('/')[-1].split('-')[0]
-        link = f"https://player.deshdeepak.me/{vid_id}"
+        link = f"http://cdn.jwplayer.com/v2/media/{vid_id}"
 
     if not vid_format.isnumeric():
         title = vid_format
