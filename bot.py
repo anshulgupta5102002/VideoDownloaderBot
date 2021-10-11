@@ -124,11 +124,11 @@ async def parse_json(file,def_format):
     dirName = os.path.basename(dirPath)
 
 
-    youtubedlexe = dirPath + '/binaries/yt-dlp.exe'
-    aria2cexe = dirPath + '/binaries/aria2c.exe'
-    mp4decryptexe = dirPath + '/binaries/mp4decrypt_new.exe'
-    mkvmergeexe = dirPath + '/binaries/mkvmerge.exe'
-    SubtitleEditexe = dirPath + '/binaries/SubtitleEdit.exe'
+    youtubedlexe = dirPath + '/yt-dlp.exe'
+    aria2cexe = dirPath + '/aria2c.exe'
+    mp4decryptexe = dirPath + '/mp4decrypt_new.exe'
+    mkvmergeexe = dirPath + '/mkvmerge.exe'
+    SubtitleEditexe = dirPath + '/SubtitleEdit.exe'
     
     output = 'd1'
     
