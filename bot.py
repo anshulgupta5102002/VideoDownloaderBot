@@ -103,7 +103,6 @@ async def start(bot, message):
     await message.reply("Send video link or html")
 
 @bot.on_message(filters.command("mpd"))
-
 async def mpd(bot, msg):
     if msg.reply_to_message is not None:
         if msg.reply_to_message.document is not None:
